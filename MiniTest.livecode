@@ -186,7 +186,7 @@ command MT.startTestFile pTestFileName
   put pTestFileName into tTestFileName
   put 0 into tFilePassed
   put 0 into tFileFailed
-  MT.report "Test File" && tTestFileName & return
+  MT.report return & "Test File" && tTestFileName & return
 end MT.startTestFile
 
 command MT.startTestRun
