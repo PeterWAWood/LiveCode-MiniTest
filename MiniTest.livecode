@@ -31,10 +31,12 @@ local tTestReport
 ## startup
 ##
 on libraryStack
-  if the environment is “server” then
+  if the environment is server then
     put "MT.scriptReporter" into tReporter 
+    put "true" & return
 	else
 		put "MT.stackReporter" into tReporter
+		put "false" & return
 	end if
 end libraryStack
 
