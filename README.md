@@ -11,7 +11,7 @@ A Mini Test script is written by simply interspersing Mini Tests commands in you
 
 At the start of your test script you simply include MiniTest and the stack you wish to test. MiniTest is in a file named MiniTest.LiveCode. The code to include in your testing script is:
 ```
-start using stack "<path to>/MiniTest.livecode"    ## replace <path to> with the path where you have saved Mini Test
+start using stack "<insert file path here>/MiniTest.livecode"  
 ```
 
 An indivdual test consist of four elements:
