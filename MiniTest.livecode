@@ -21,6 +21,7 @@ local tAssertsFailed
 local tFailed
 local tFileFailed
 local tFilePassed
+local tNewlineIfNeeded
 local tPassed
 local tReporter
 local tTestName
@@ -43,16 +44,30 @@ end libraryStack
 ##
 command assertionFailed pExpected, pActual
   add 1 to tAssertsFailed
+  Mt.report tNewlineIfNeeded
   MT.report "Assert #" & (tAssertsPassed + tAssertsFailed) & return
   MT.report "Expected" && pExpected & return
   MT.report "Actual" && pActual & return
 end assertionFailed
 
 command MT.clearSuccessfulTestName
+  local tSpaces = "                                                                      "
   if tReporter is "MT.stackReporter" then
     delete line -1 of Field tTestReport
-  end if 
+  end if
+  if tReporter is "MT.scriptReporter" then
+    MT.Report numToCodepoint(0x0D) & tSpaces & numToCodepoint(0x0D)
+  end if
 end MT.clearSuccessfulTestName
+
+command MT.displayTestName pTestName
+  MT.report "Test" && pTestName 
+  put return into tNewlineIfNeeded
+  if tReporter is "MT.stackReporter" then
+    MT.report return
+    put empty into tNewlineIfNeeded
+  end if
+end MT.displayTestName
 
 command MT.highlightError
   if tReporter is "MT.stackReporter" then
@@ -92,13 +107,13 @@ command MT.assertEqual pExpected, pActual
   end if
 end MT.assertEqual
 
-command MT.assertTrue pActual
+command MT.assert pActual
   if pActual =  true then
     add 1 to tAssertsPassed
   else
     assertionFailed "True", pActual
   end if
-end MT.assertTrue
+end MT.assert
 
 command MT.endTest
   if tAssertsFailed > 0 then 
@@ -139,6 +154,14 @@ command MT.endTestRun
   end if
 end MT.endTestRun
 
+command MT.refute pActual
+  if pActual <> true then
+    add 1 to tAssertsPassed
+  else
+    assertionFailed "Not true", pActual
+  end if
+end MT.refute
+
 command MT.refuteEqual pExpected, pActual
   if pActual <> pExpected then
     add 1 to tAssertsPassed
@@ -156,7 +179,7 @@ command MT.startTest pTestName
   put pTestName into tTestName
   put 0 into tAssertsPassed
   put 0 into tAssertsFailed
-  MT.report "Test" && tTestName & return
+  MT.displayTestName tTestName
 end MT.startTest
 
 command MT.startTestFile pTestFileName

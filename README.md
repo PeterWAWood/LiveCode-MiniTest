@@ -50,6 +50,12 @@ This command signfies the start of an individual test. A name is required so tha
 MT.startTest "Test 1"
 ```
 
+### MT.assert pActual
+This command checks that the supplied actual value is true.
+```
+MT.assert "a" = "A"
+```
+
 ### MT.assertEqual pExpected, pActual
 This command checks that the supplied actual value is equal to the supplied expected value.
 ```
@@ -60,12 +66,6 @@ MT.assertEqual 2, 1 + 1
 This command checks that the supplied actual value is not equal to the supplied expected value.
 ```
 MT.refuteEqual "z", the first character of "abcdefgh"
-```
-
-### MT.assertTrue pActual
-This command checks that the supplied actual value is true.
-```
-MT.assertTrue "a" = "A"
 ```
 
 ### MT.endTest
@@ -85,3 +85,11 @@ This command signifies the end of a test run. Mini Test will print totals for th
 ```
 MT.endTestRun
 ```
+
+### MT.refute pActual
+This command checks that the supplied actual value is false.
+```
+MT.refute "a" = "b"
+```
+
+
