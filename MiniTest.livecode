@@ -1,0 +1,172 @@
+script "MiniTest"
+
+## A minimal LiveCode test framework
+##
+## Author: Peter W A Wood
+##
+## © Copyright 2015 Peter W A Wood
+##
+## Licence: BSD - https://github.com/PeterWAWood/LiveCode-MiniTest/blob/master/LICENSE
+
+##
+## global variables 
+##
+global gTestingOutput                       ## only used during testing of MiniTest itself
+
+##
+## script local variables
+##
+local tAssertsPassed
+local tAssertsFailed
+local tFailed
+local tFileFailed
+local tFilePassed
+local tPassed
+local tReporter
+local tTestName
+local tTestFileName
+local tTestReport
+
+##
+## startup
+##
+on libraryStack
+  if the environment is “server” then
+    put "MT.scriptReporter" into tReporter 
+	else
+		put "MT.stackReporter" into tReporter
+	end if
+end libraryStack
+
+##
+## internal commands
+##
+command assertionFailed pExpected, pActual
+  add 1 to tAssertsFailed
+  MT.report "Assert #" & (tAssertsPassed + tAssertsFailed) & return
+  MT.report "Expected" && pExpected & return
+  MT.report "Actual" && pActual & return
+end assertionFailed
+
+command MT.clearSuccessfulTestName
+  if tReporter is "MT.stackReporter" then
+    delete line -1 of Field tTestReport
+  end if 
+end MT.clearSuccessfulTestName
+
+command MT.highlightError
+  if tReporter is "MT.stackReporter" then
+    set the foregroundColor of line -1 of Field tTestReport to "red"
+  end if
+end MT.highlightError
+
+command MT.report pResult
+  dispatch tReporter with pResult
+end MT.report
+
+command MT.scriptReporter pResult
+  put pResult
+end MT.scriptReporter
+
+command MT.stackReporter pResult
+  put pResult after Field tTestReport
+end Mt.stackReporter
+
+command MT.testInit                         ## only for testing MiniTest itself
+  put "MT.testReporter" into tReporter
+  put empty into gTestingOutput
+end MT.testInit
+
+command MT.testReporter pResult             ## only for testing MiniTest itself
+  put pResult after gTestingOutput
+end MT.testReporter
+
+##
+## published commands
+##
+command MT.assertEqual pExpected, pActual
+  if pActual = pExpected then
+    add 1 to tAssertsPassed
+  else
+    assertionFailed pExpected, pActual
+  end if
+end MT.assertEqual
+
+command MT.assertTrue pActual
+  if pActual =  true then
+    add 1 to tAssertsPassed
+  else
+    assertionFailed "True", pActual
+  end if
+end MT.assertTrue
+
+command MT.endTest
+  if tAssertsFailed > 0 then 
+    add 1 to tFailed
+    add 1 to tFileFailed
+    MT.report tTestName && "Failed" & return
+    MT.highlightError
+  else
+    add 1 to tPassed
+    add 1 to tFilePassed
+    MT.clearSuccessfulTestName
+  end if
+end MT.endTest
+
+command MT.endTestFile 
+  local tFileNumTests
+  put tFilePassed + tFileFailed into tFileNumTests
+  MT.report return & "Test Results for File" && tTestFileName & return
+  MT.report  "Number of Tests" & tab & tFileNumTests & return
+  MT.report "Number Passed" & tab & tFilePassed  & return
+  MT.report "Number Failed"  & tab & tFileFailed & return
+  if tFileFailed > 0 then
+    MT.report "TEST FAILURES!!" & return
+    MT.highlightError
+  end if
+end MT.endTestFile
+
+command MT.endTestRun 
+  local tNumTests
+  put tPassed + tFailed into tNumTests
+  MT.report return & "Summary Test Results"  & return
+  MT.report  "Number of Tests" & tab & tNumTests & return
+  MT.report "Number Passed" & tab & tPassed  & return
+  MT.report "Number Failed"  & tab & tFailed & return
+  if tFailed > 0 then
+    MT.report "TEST FAILURES!!" & return
+    MT.highlightError
+  end if
+end MT.endTestRun
+
+command MT.refuteEqual pExpected, pActual
+  if pActual <> pExpected then
+    add 1 to tAssertsPassed
+  else
+    assertionFailed pExpected, pActual
+  end if
+end MT.refuteEqual
+
+command MT.setTestReport pTestReport
+  put pTestReport into tTestReport
+  put empty into Field tTestReport
+end MT.setTestReport
+
+command MT.startTest pTestName
+  put pTestName into tTestName
+  put 0 into tAssertsPassed
+  put 0 into tAssertsFailed
+  MT.report "Test" && tTestName & return
+end MT.startTest
+
+command MT.startTestFile pTestFileName
+  put pTestFileName into tTestFileName
+  put 0 into tFilePassed
+  put 0 into tFileFailed
+  MT.report "Test File" && tTestFileName & return
+end MT.startTestFile
+
+command MT.startTestRun
+  put 0 into tPassed
+  put 0 into tFailed
+end MT.startTestRun

@@ -1,0 +1,280 @@
+#!/Users/peter/Code/LiveCodeServer/livecode
+#coding:utf-8
+
+if the platform is "MacOS" then
+  set the outputLineEndings to "lf"
+  set the outputTextEncoding to "utf8"
+end if
+
+global gTestingOutput
+local tPassed = 0
+local tFailed = 0
+local tTests = 0    
+
+start using stack "../MiniTest.livecode"
+
+put "Start of MiniTest test" & return & return
+MT.testInit
+
+# Empty test run
+MT.startTestRun
+MT.endTestRun
+if line 1 of gTestingOutput <> empty or \
+   line 2 of gTestingOutput <> "Summary Test Results" or \
+   line 3 of gTestingOutput <> "Number of Tests" & tab & "0" or \
+   line 4 of gTestingOutput <> "Number Passed" & tab & "0" or \
+   line 5 of gTestingOutput <> "Number Failed" & tab & "0" or \
+   line 6 of gTestingOutput <> empty then
+  add 1 to tFailed
+  put "***Empty Test Run Failed***" & return
+else
+  add 1 to tPassed
+end if
+put empty into gTestingOutput
+
+# Test run with Empty test file
+MT.startTestRun
+MT.startTestFile "TestFileOne"
+MT.endTestFile
+MT.endTestRun
+if "Test Results for File TestFileOne" is not in gTestingOutput or \
+   "Number of Tests" & tab & "0" is not in gTestingOutput or \ 
+   "Number Passed" & tab & "0" is not in gTestingOutput or \
+   "Number Failed" & tab & "0" is not in gTestingOutput then
+  add 1 to tFailed
+  put "***Empty Test File Failed***" & return
+else
+  add 1 to tPassed
+end if
+put empty into gTestingOutput
+
+# Test run with one test file containing one test with two of each type of assertion
+MT.startTestRun
+MT.startTestFile "TestFileTwo"
+MT.startTest "Test1"
+MT.assertEqual 1, 1
+MT.assertEqual 1, 2
+MT.refuteEqual 1,2
+MT.refuteEqual 1, 1
+MT.assertTrue true
+MT.assertTrue false
+MT.endTest
+MT.endTestFile
+MT.endTestRun
+if "Test File TestFileTwo" is not in gTestingOutput or \
+   "Test Test1" is not in gTestingOutput or \
+   "Assert #2" is not in gTestingOutput or \
+   "Expected 1" is not in gTestingOutput or \
+   "Actual 2" is not in gTestingOutput or \
+   "Assert #4" is not in gTestingOutput or \
+   "Assert #6" is not in gTestingOutput or \
+   "Test1 Failed" is not in gTestingOutput or \
+   "TEST FAILURES!!" is not in gTestingOutput then
+    add 1 to tFailed
+  put "***Empty Test File Failed***" & return
+else
+  add 1 to tPassed
+end if
+put empty into gTestingOutput
+
+# Test run with one test file containing five tests, three pass two fail
+MT.startTestRun
+MT.startTestFile "TestFileThree"
+MT.startTest "Test1"
+MT.assertEqual 1, 1
+MT.endTest
+MT.startTest "Test2"
+MT.assertEqual 2, 2
+MT.endTest
+MT.startTest "Test3"
+MT.assertEqual 3, 3
+MT.endTest
+MT.startTest "Test4"
+MT.assertEqual 4, 5 
+MT.endTest
+MT.startTest "Test5"
+MT.assertEqual 6, 7
+MT.endTest 
+MT.endTestFile
+MT.endTestRun
+if "Number of Tests" & tab & "5" is not in gTestingOutput or \ 
+   "Number Passed" & tab & "3" is not in gTestingOutput or \
+   "Number Failed" & tab & "2" is not in gTestingOutput then
+  add 1 to tFailed
+  put "***Five test test failed***" & return
+else
+  add 1 to tPassed
+end if
+put empty into gTestingOutput
+
+# Test assert equal passes
+MT.startTestRun
+MT.startTestFile "TestFileFour"
+MT.startTest "Test1"
+MT.assertEqual 1, 1
+MT.endTest
+MT.startTest "Test2"
+MT.assertEqual "A", "A"
+MT.endTest
+MT.startTest "Test3"
+MT.assertEqual "♬", "♬"
+MT.endTest
+MT.startTest "Test4"
+MT.assertEqual "r", the fifth character of "Peter"
+MT.endTest
+MT.endTestFile
+MT.endTestRun
+if "Number of Tests" & tab & "4" is not in gTestingOutput or \ 
+   "Number Passed" & tab & "4" is not in gTestingOutput or \
+   "Number Failed" & tab & "0" is not in gTestingOutput then
+  add 1 to tFailed
+  put "***Assert equal passes failed***" & return
+else
+  add 1 to tPassed
+end if 
+put empty into gTestingOutput
+
+# Test assert equal fails
+MT.startTestRun
+MT.startTestFile "TestFileFive"
+MT.startTest "Test1"
+MT.assertEqual 1, 2
+MT.endTest
+MT.startTest "Test2"
+MT.assertEqual "A", "B"
+MT.endTest
+MT.startTest "Test"
+MT.assertEqual "♬", "♫"
+MT.endTest
+MT.startTest "Test4"
+MT.assertEqual "r", the fourth character of "Peter"
+MT.endTest
+MT.endTestFile
+MT.endTestRun
+if "Number of Tests" & tab & "4" is not in gTestingOutput or \ 
+   "Number Passed" & tab & "0" is not in gTestingOutput or \
+   "Number Failed" & tab & "4" is not in gTestingOutput then
+  add 1 to tFailed
+  put "***Assert equal fails failed***" & return
+else
+  add 1 to tPassed
+end if 
+put empty into gTestingOutput
+
+# Test assert not equal fails
+MT.startTestRun
+MT.startTestFile "TestFileSix"
+MT.startTest "Test1"
+MT.refuteEqual 1, 1
+MT.endTest
+MT.startTest "Test2"
+MT.refuteEqual "A", "A"
+MT.endTest
+MT.startTest "Test3"
+MT.refuteEqual "♬", "♬"
+MT.endTest
+MT.startTest "Test4"
+MT.refuteEqual "r", the fifth character of "Peter"
+MT.endTest
+MT.endTestFile
+MT.endTestRun
+if "Number of Tests" & tab & "4" is not in gTestingOutput or \ 
+   "Number Passed" & tab & "0" is not in gTestingOutput or \
+   "Number Failed" & tab & "4" is not in gTestingOutput then
+  add 1 to tFailed
+  put "***Assert not equal fails failed***" & return
+else
+  add 1 to tPassed
+end if
+put empty into gTestingOutput
+
+# Test assert not equal passes
+MT.startTestRun
+MT.startTestFile "TestFileSeven"
+MT.startTest "Test1"
+MT.refuteEqual 1, 2
+MT.endTest
+MT.startTest "Test2"
+MT.refuteEqual "A", "B"
+MT.endTest
+MT.startTest "Test"
+MT.refuteEqual "♬", "♫"
+MT.endTest
+MT.startTest "Test4"
+MT.refuteEqual "r", the fourth character of "Peter"
+MT.endTest
+MT.endTestFile
+MT.endTestRun
+if "Number of Tests" & tab & "4" is not in gTestingOutput or \ 
+   "Number Passed" & tab & "4" is not in gTestingOutput or \
+   "Number Failed" & tab & "0" is not in gTestingOutput then
+  add 1 to tFailed
+  put "***Assert not equal passes failed***" & return
+else
+  add 1 to tPassed
+end if
+put empty into gTestingOutput
+
+# Test assert true passes
+MT.startTestRun
+MT.startTestFile "TestFileEight"
+MT.startTest "Test1"
+MT.assertTrue true
+MT.endTest
+MT.startTest "Test2"
+MT.assertTrue "A" = "A"
+MT.endTest
+MT.startTest "Test3"
+MT.assertTrue "♬" = "♬"
+MT.endTest
+MT.startTest "Test4"
+MT.assertTrue "r" = the fifth character of "Peter"
+MT.endTest
+MT.endTestFile
+MT.endTestRun
+if "Number of Tests" & tab & "4" is not in gTestingOutput or \ 
+   "Number Passed" & tab & "4" is not in gTestingOutput or \
+   "Number Failed" & tab & "0" is not in gTestingOutput then
+  add 1 to tFailed
+  put "***Assert true passes failed***" & return
+else
+  add 1 to tPassed
+end if 
+put empty into gTestingOutput
+
+# Test assert true fails
+MT.startTestRun
+MT.startTestFile "TestFileNine"
+MT.startTest "Test1"
+MT.assertTrue false
+MT.endTest
+MT.startTest "Test2"
+MT.assertTrue "A" = "B"
+MT.endTest
+MT.startTest "Test"
+MT.assertTrue "♬" = "♫"
+MT.endTest
+MT.startTest "Test4"
+MT.assertTrue "r" = the fourth character of "Peter"
+MT.endTest
+MT.endTestFile
+MT.endTestRun
+if "Number of Tests" & tab & "4" is not in gTestingOutput or \ 
+   "Number Passed" & tab & "0" is not in gTestingOutput or \
+   "Number Failed" & tab & "4" is not in gTestingOutput then
+  add 1 to tFailed
+  put "***Assert true fails failed***" & return
+else
+  add 1 to tPassed
+end if 
+put empty into gTestingOutput
+
+   
+put "End of MiniTest test" & return
+put tPassed + tFailed into tTests
+put "Number of Tests" && tTests & return
+put "Number Passed  " && tPassed & return
+put "Number Failed  " && tFailed & return
+if tFailed > 0 then
+  put "TEST FAILURES!" & return
+end if
