@@ -4,7 +4,7 @@ script "MiniTest"
 ##
 ## Author: Peter W A Wood
 ##
-## © Copyright 2015 Peter W A Wood
+## ¬¨¬© Copyright 2015 Peter W A Wood
 ##
 ## Licence: BSD - https://github.com/PeterWAWood/LiveCode-MiniTest/blob/master/LICENSE
 
@@ -18,12 +18,14 @@ global gTestingOutput                       ## only used during testing of MiniT
 ##
 local tAssertsPassed
 local tAssertsFailed
+local tCard
 local tFailed
 local tFileFailed
 local tFilePassed
 local tNewlineIfNeeded
 local tPassed
 local tReporter
+local tStack
 local tTestName
 local tTestFileName
 local tTestReport
@@ -42,18 +44,18 @@ end libraryStack
 ##
 ## internal commands
 ##
-command assertionFailed pExpected, pActual
+command MT.assertionFailed pExpected, pActual
   add 1 to tAssertsFailed
   Mt.report tNewlineIfNeeded
   MT.report "Assert #" & (tAssertsPassed + tAssertsFailed) & return
   MT.report "Expected" && pExpected & return
   MT.report "Actual" && pActual & return
-end assertionFailed
+end MT.assertionFailed
 
 command MT.clearSuccessfulTestName
   local tSpaces = "                                                                      "
   if tReporter is "MT.stackReporter" then
-    delete line -1 of Field tTestReport
+    delete line -1 of Field tTestReport of Card tCard of Stack tStack
   end if
   if tReporter is "MT.scriptReporter" then
     MT.Report numToCodepoint(0x0D) & tSpaces & numToCodepoint(0x0D)
@@ -71,7 +73,7 @@ end MT.displayTestName
 
 command MT.highlightError
   if tReporter is "MT.stackReporter" then
-    set the foregroundColor of line -1 of Field tTestReport to "red"
+    set the foregroundColor of line -1 of Field tTestReport of Card tCard of Stack tStack to "red"
   end if
 end MT.highlightError
 
@@ -84,7 +86,7 @@ command MT.scriptReporter pResult
 end MT.scriptReporter
 
 command MT.stackReporter pResult
-  put pResult after Field tTestReport
+  put pResult after Field "Test Report" of Card tCard of Stack tStack
 end Mt.stackReporter
 
 command MT.testInit                         ## only for testing MiniTest itself
@@ -103,7 +105,7 @@ command MT.assertEqual pExpected, pActual
   if pActual = pExpected then
     add 1 to tAssertsPassed
   else
-    assertionFailed pExpected, pActual
+    MT.assertionFailed pExpected, pActual
   end if
 end MT.assertEqual
 
@@ -111,7 +113,7 @@ command MT.assert pActual
   if pActual =  true then
     add 1 to tAssertsPassed
   else
-    assertionFailed "True", pActual
+    MT.assertionFailed "True", pActual
   end if
 end MT.assert
 
@@ -158,7 +160,7 @@ command MT.refute pActual
   if pActual <> true then
     add 1 to tAssertsPassed
   else
-    assertionFailed "Not true", pActual
+    MT.assertionFailed "Not true", pActual
   end if
 end MT.refute
 
@@ -166,13 +168,15 @@ command MT.refuteEqual pExpected, pActual
   if pActual <> pExpected then
     add 1 to tAssertsPassed
   else
-    assertionFailed pExpected, pActual
+    MT.assertionFailed pExpected, pActual
   end if
 end MT.refuteEqual
 
-command MT.setTestReport pTestReport
+command MT.setTestReport pStack, pCard, pTestReport
+  put pStack into tStack
+  put pCard into tCard
   put pTestReport into tTestReport
-  put empty into Field tTestReport
+  put empty into Field tTestReport of Card tCard of Stack tStack
 end MT.setTestReport
 
 command MT.startTest pTestName
