@@ -1,4 +1,4 @@
-script "MiniTest"
+﻿script "MiniTest"
 
 ## A minimal LiveCode test framework
 ##
