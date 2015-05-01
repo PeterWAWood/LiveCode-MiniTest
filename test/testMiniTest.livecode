@@ -1,4 +1,4 @@
-﻿#!/Users/peter/Code/LiveCodeServer/livecode
+#!/Users/peter/Code/LiveCodeServer/livecode
 #coding:utf-8
 
 if the platform is "MacOS" then
