@@ -164,7 +164,7 @@ else
 end if 
 put empty into gTestingOutput
 
-# Test assert not equal fails
+# Test refute equal fails
 MT.startTestRun
 MT.startTestFile "TestFileSix"
 MT.startTest "Test1"
@@ -185,13 +185,13 @@ if "Number of Tests" & tab & "4" is not in gTestingOutput or \
    "Number Passed" & tab & "0" is not in gTestingOutput or \
    "Number Failed" & tab & "4" is not in gTestingOutput then
   add 1 to tFailed
-  put "***Assert not equal fails failed***" & return
+  put "***Refute equal fails failed***" & return
 else
   add 1 to tPassed
 end if
 put empty into gTestingOutput
 
-# Test assert not equal passes
+# Test refute equal passes
 MT.startTestRun
 MT.startTestFile "TestFileSeven"
 MT.startTest "Test1"
@@ -212,7 +212,7 @@ if "Number of Tests" & tab & "4" is not in gTestingOutput or \
    "Number Passed" & tab & "4" is not in gTestingOutput or \
    "Number Failed" & tab & "0" is not in gTestingOutput then
   add 1 to tFailed
-  put "***Assert not equal passes failed***" & return
+  put "***Refute equal passes failed***" & return
 else
   add 1 to tPassed
 end if
@@ -326,7 +326,114 @@ else
 end if 
 put empty into gTestingOutput
 
-   
+# Test assert strict equal passes
+MT.startTestRun
+MT.startTestFile "TestFileTwelve"
+MT.startTest "Test1"
+MT.assertStrictEqual 1, 1
+MT.endTest
+MT.startTest "Test2"
+MT.assertStrictEqual "A", "A"
+MT.endTest
+MT.startTest "Test3"
+MT.assertStrictEqual "♬", "♬"
+MT.endTest
+MT.startTest "Test4"
+MT.assertStrictEqual "r", the fifth character of "Peter"
+MT.endTest
+MT.endTestFile
+MT.endTestRun
+if "Number of Tests" & tab & "4" is not in gTestingOutput or \ 
+   "Number Passed" & tab & "4" is not in gTestingOutput or \
+   "Number Failed" & tab & "0" is not in gTestingOutput then
+  add 1 to tFailed
+  put "***Assert strict equal passes failed***" & return
+else
+  add 1 to tPassed
+end if 
+put empty into gTestingOutput
+
+# Test assert strict equal fails
+MT.startTestRun
+MT.startTestFile "TestFileThirteen"
+MT.startTest "Test1"
+MT.assertStrictEqual 1, 2
+MT.endTest
+MT.startTest "Test2"
+MT.assertStrictEqual "A", "a"
+MT.endTest
+MT.startTest "Test3"
+MT.assertStrictEqual "♬", "♫"
+MT.endTest
+MT.startTest "Test4"
+MT.assertStrictEqual "R", the fourth character of "Peter"
+MT.endTest
+MT.endTestFile
+MT.endTestRun
+if "Number of Tests" & tab & "4" is not in gTestingOutput or \ 
+   "Number Passed" & tab & "0" is not in gTestingOutput or \
+   "Number Failed" & tab & "4" is not in gTestingOutput then
+  add 1 to tFailed
+  put "***Assert strict equal fails failed***" & return
+else
+  add 1 to tPassed
+end if 
+put empty into gTestingOutput
+
+# Test refute strict equal fails
+MT.startTestRun
+MT.startTestFile "TestFileFourteen"
+MT.startTest "Test1"
+MT.refuteStrictEqual 1, 1
+MT.endTest
+MT.startTest "Test2"
+MT.refuteStrictEqual "A", "A"
+MT.endTest
+MT.startTest "Test3"
+MT.refuteStrictEqual "♬", "♬"
+MT.endTest
+MT.startTest "Test4"
+MT.refuteStrictEqual "r", the fifth character of "Peter"
+MT.endTest
+MT.endTestFile
+MT.endTestRun
+if "Number of Tests" & tab & "4" is not in gTestingOutput or \ 
+   "Number Passed" & tab & "0" is not in gTestingOutput or \
+   "Number Failed" & tab & "4" is not in gTestingOutput then
+  add 1 to tFailed
+  put "***Refute strict equal fails failed***" & return
+else
+  add 1 to tPassed
+end if
+put empty into gTestingOutput
+
+# Test refute strict equal passes
+MT.startTestRun
+MT.startTestFile "TestFileFifteen"
+MT.startTest "Test1"
+MT.refuteStrictEqual 1, 2
+MT.endTest
+MT.startTest "Test2"
+MT.refuteStrictEqual "A", "a"
+MT.endTest
+MT.startTest "Test"
+MT.refuteStrictEqual "♬", "♫"
+MT.endTest
+MT.startTest "Test4"
+MT.refuteStrictEqual "R", the fourth character of "Peter"
+MT.endTest
+MT.endTestFile
+MT.endTestRun
+if "Number of Tests" & tab & "4" is not in gTestingOutput or \ 
+   "Number Passed" & tab & "4" is not in gTestingOutput or \
+   "Number Failed" & tab & "0" is not in gTestingOutput then
+  add 1 to tFailed
+  put "***Refute strict equal passes failed***" & return
+else
+  add 1 to tPassed
+end if
+put empty into gTestingOutput
+  
 put "End of MiniTest test" & return
 put tPassed + tFailed into tTests
 put "Number of Tests" && tTests & return

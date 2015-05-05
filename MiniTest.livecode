@@ -101,6 +101,14 @@ end MT.testReporter
 ##
 ## published commands
 ##
+command MT.assert pActual
+  if pActual =  true then
+    add 1 to tAssertsPassed
+  else
+    MT.assertionFailed "True", pActual
+  end if
+end MT.assert
+
 command MT.assertEqual pExpected, pActual
   if pActual = pExpected then
     add 1 to tAssertsPassed
@@ -109,13 +117,15 @@ command MT.assertEqual pExpected, pActual
   end if
 end MT.assertEqual
 
-command MT.assert pActual
-  if pActual =  true then
+command MT.assertStrictEqual pExpected, pActual
+  set the caseSensitive to true
+  if pActual = pExpected then
     add 1 to tAssertsPassed
   else
-    MT.assertionFailed "True", pActual
+    MT.assertionFailed pExpected, pActual
   end if
-end MT.assert
+  set the caseSensitive to false
+end MT.assertStrictEqual
 
 command MT.endTest
   if tAssertsFailed > 0 then 
@@ -171,6 +181,16 @@ command MT.refuteEqual pExpected, pActual
     MT.assertionFailed pExpected, pActual
   end if
 end MT.refuteEqual
+
+command MT.refuteStrictEqual pExpected, pActual
+    set the caseSensitive to true
+  if pActual <> pExpected then
+    add 1 to tAssertsPassed
+  else
+    MT.assertionFailed pExpected, pActual
+  end if
+  set the caseSensitive to false
+end MT.refuteStrictEqual
 
 command MT.setTestReport pStack, pCard, pTestReport
   put pStack into tStack
