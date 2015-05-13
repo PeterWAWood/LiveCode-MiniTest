@@ -433,6 +433,24 @@ else
   add 1 to tPassed
 end if
 put empty into gTestingOutput
+
+# Test that a test with no asserts is reported as failed
+MT.startTestRun
+MT.startTestFile "TestFileSixteen"
+MT.startTest "Test1"
+MT.endTest
+MT.endTestFile
+MT.endTestRun
+if "Number of Tests" & tab & "1" is not in gTestingOutput or \ 
+   "Number Passed" & tab & "0" is not in gTestingOutput or \
+   "Number Failed" & tab & "1" is not in gTestingOutput then
+  add 1 to tFailed
+  put "***Test with no assertions did not fail***" & return
+else
+  add 1 to tPassed
+end if
+put empty into gTestingOutput
+
   
 put "End of MiniTest test" & return
 put tPassed + tFailed into tTests

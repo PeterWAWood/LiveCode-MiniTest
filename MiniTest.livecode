@@ -86,7 +86,7 @@ command MT.scriptReporter pResult
 end MT.scriptReporter
 
 command MT.stackReporter pResult
-  put pResult after Field "Test Report" of Card tCard of Stack tStack
+  put pResult after Field tTestReport of Card tCard of Stack tStack
 end Mt.stackReporter
 
 command MT.testInit                         ## only for testing MiniTest itself
@@ -128,7 +128,9 @@ command MT.assertStrictEqual pExpected, pActual
 end MT.assertStrictEqual
 
 command MT.endTest
-  if tAssertsFailed > 0 then 
+  local tAsserts
+  put tAssertsPassed + tAssertsFailed into tAsserts
+  if (tAssertsFailed > 0) or (tAsserts = 0) then 
     add 1 to tFailed
     add 1 to tFileFailed
     MT.report tTestName && "Failed" & return
