@@ -1,6 +1,9 @@
 # LiveCode-MiniTest
 Mini Test is a small, easy to use testing toolkit for LiveCode. It can be used in both GUI scripts and server scripts. Thanks to LiveCode's messaging, it can be used to test GUI applications as well as commands and handlers.
 
+## Warning
+LiveCode Mini Test is no longer being developed or maintained.
+
 ## How It Works
 Mini Test consists of a set of handlers which you can use to create automated test scripts. There are at least two scripts needed to run a MiniTest test script. The test script itself and MiniTest. Normally you would also include one or more stacks that you wish to test unless you are testing elements of the LiveCode language.
 
